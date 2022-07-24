@@ -37,24 +37,17 @@ public class NotesData
 
 public class MusicGameManager : MonoBehaviour
 {
-    //追加(仮)
     private notesScriptGod _nsg;
 
     public GameObject _startButton;
 
     public GameObject _zanki;
 
-    //public GameObject _readygo;
-
-    //public Text _textReadygo;
-
     public Text _textZanki;
 
     [SerializeField] Image _ImageReadygo;
 
     public int _numOfZanki;
-
-    //public ArrayList _notesList;
 
     public GameObject[] _notes;
 
@@ -75,8 +68,6 @@ public class MusicGameManager : MonoBehaviour
     private string filePath = "JSON/N06";
 
     private float _startTime;
-
-    //private float _musicGameTime;
 
     private bool _isPlaying = false;
 
@@ -101,7 +92,7 @@ public class MusicGameManager : MonoBehaviour
     private int bad = 0;
     private int miss = 0;
     
-    private List<GameObject> _notesInstances; // 追加しました
+    private List<GameObject> _notesInstances;
 
     [SerializeField] Text resultTextWin;
     [SerializeField] GameObject resultCanvasWin;
@@ -125,16 +116,7 @@ public class MusicGameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
-    //追加(仮)
-        // _nsg = GameObject.FindWithTag("NotesGOD").GetComponent<notesScriptGod>();
-        // _nsg.resetIndexTiming();
-    
-
-        //_textReadygo = _readygo.GetComponent<Text>();
         _textZanki = _zanki.GetComponent<Text>();
-
-        //_ImageReadygo = _readygo.GetComponent<Image>();
 
         _audioSource = GameObject.FindWithTag("PlayGameMusic").GetComponent<AudioSource>();
 
@@ -163,8 +145,6 @@ public class MusicGameManager : MonoBehaviour
 
         _generateNotesTiming = (float)GetGenarateNotesTiming();
 
-       //橋のPrefabを生成
-        //Instantiate<GameObject>(this._bridge,Vector3.zero, Quaternion.identity);
     }
 
     // Update is called once per frame
@@ -176,13 +156,12 @@ public class MusicGameManager : MonoBehaviour
 
     ///<summary>
     /// ゲーム終了時に起動すべきメソッド
-    /// Result表記の確定後にちょっと弄ります。
     ///</summary>
     private void GameFinish()
     {
         _bridgeobject.SetActive(false);
         NoteActivate(false);
-        // TODO 音楽ストップ
+        // 音楽ストップ
         _audioSource.Stop();
 
 
@@ -192,8 +171,8 @@ public class MusicGameManager : MonoBehaviour
                                           + "\n" + this.good + "\n" + this.bad + "\n" + this.miss;
 
             this.resultCanvasLose.SetActive(true);
-            //ここに負けBGM
-
+            
+            //負けBGM
             this._OverSource.Play();
         }
         else if( _notesInstances.Count==perfect && !this._isGameOver)
@@ -202,8 +181,8 @@ public class MusicGameManager : MonoBehaviour
                                           + "\n" + this.good + "\n" + this.bad + "\n" + this.miss;
 
             this.resultCanvasWin.SetActive(true);
-            //ここに勝ちBGM
-
+            
+            //勝ちBGM
             this._AllPerfectSource.Play();
         }
         else
@@ -212,8 +191,8 @@ public class MusicGameManager : MonoBehaviour
                                           + "\n" + this.good + "\n" + this.bad + "\n" + this.miss;
 
             this.resultCanvasWin.SetActive(true);
-            //ここに勝ちBGM
-
+            
+            //勝ちBGM
             this._ClearSource.Play();
         }
 
@@ -242,11 +221,6 @@ public class MusicGameManager : MonoBehaviour
     {
         //スタートボタン消える
         _startButton.SetActive(false);
-
-        //Readyを表示
-        //_readygo.SetActive(true);
-
-
         
        //橋のPrefabを生成
         _bridgeobject = Instantiate<GameObject>(this._bridge,Vector3.zero, Quaternion.identity);
@@ -254,12 +228,9 @@ public class MusicGameManager : MonoBehaviour
 
         _ImageReadygo.gameObject.SetActive(true);
 
-        //_textReadygo.text = "Ready";
-
         _ImageReadygo.sprite = Resources.Load<Sprite>("Sprites/MusicGame/ready");
 
         _isPUIPUINotes = true;
-
 
         //2秒間待つ関数
 
@@ -283,10 +254,6 @@ public class MusicGameManager : MonoBehaviour
         //一秒間待つ
 
         yield return new WaitForSeconds(1.0f);
-
-        //GO表示消す
-
-        //_readygo.SetActive(false);
 
         _ImageReadygo.gameObject.SetActive(false);
 
@@ -370,10 +337,6 @@ public class MusicGameManager : MonoBehaviour
         return (num == 0) ? 1 : ((int)Mathf.Log10(num) + 1);
     }
 
-// 知見
-// gameObject.transform 内部でGetComponentをしてて重い　→　Transform unko; unko = gameObject.transform;
-// InstantiateしたPrefabに紐づく関数は生成した次のフレームで呼び出される
-
     //ノーツを流すラインの番号を引数にしてる
     private void GenerateNotes()
     {
@@ -412,20 +375,13 @@ public class MusicGameManager : MonoBehaviour
                 lineNum.Add(4);
                 zahyou.Add((10f) * fumen.notes[l].timing);
             }
-            /*
-            lineNum.Add(this.fumen.notes[l].line);
-            zahyou.Add((10f) * fumen.notes[l].timing);
-            */
         }
 
         if(zahyou.Count != lineNum.Count)
         {
-            Debug.Log("そこのお前！座標に含まれる要素数はLineNumに含まれる要素数に等しくないぜ！");
+            Debug.Log("座標に含まれる要素数はLineNumに含まれる要素数に等しくない");
             return;
         }
-        // ノーツを作成する座標を割り出す計算
-        // 速度、時間→座標
-        // ↑天才か？
         
 
     
@@ -434,7 +390,7 @@ public class MusicGameManager : MonoBehaviour
             this._notesInstances.Add(Instantiate<GameObject>(_notes[lineNum[j]-1],new Vector3(8.0f + zahyou[j],   -6f + (2.1f * lineNum[j]), 5),Quaternion.identity));
         }
         // 残基決定
-        _numOfZanki = zahyou.Count / 3; // 要調整　HP決定
+        _numOfZanki = zahyou.Count / 3;
 
 
     }
